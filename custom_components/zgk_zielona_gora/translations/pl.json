@@ -17,7 +17,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Nie udało się połączyć z www.zgk.net.pl.",
+      "cannot_connect": "Nie udało się połączyć ze stroną ZGK Zielona Góra.",
       "not_found": "ZGK nie zna takiego adresu. Sprawdź pisownię (z polskimi znakami).",
       "too_many": "Za dużo wyników. Dopisz numer budynku lub dokładniejszą nazwę."
     },

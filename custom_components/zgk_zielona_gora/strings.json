@@ -17,7 +17,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Could not connect to www.zgk.net.pl.",
+      "cannot_connect": "Could not connect to the ZGK Zielona Góra website.",
       "not_found": "ZGK does not know this address. Check the spelling (with Polish characters).",
       "too_many": "Too many results. Add the building number or a more precise name."
     },
