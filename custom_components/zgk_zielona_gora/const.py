@@ -27,6 +27,7 @@ CONF_WEEKS_AHEAD: Final = "weeks_ahead"
 CONF_HOLIDAY_MODE: Final = "holiday_mode"
 CONF_OVERRIDES: Final = "overrides"
 CONF_SEARCH: Final = "search"
+CONF_WASTE_TYPES: Final = "waste_types"
 
 DEFAULT_WEEKS_AHEAD: Final = 26
 

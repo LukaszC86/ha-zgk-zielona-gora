@@ -29,8 +29,9 @@
     "step": {
       "init": {
         "title": "Ustawienia harmonogramu",
-        "description": "Odbiory, które ZGK podaje tylko jako dzień tygodnia (zwykle zmieszane i BIO), są wyliczane co tydzień. Ręczne zmiany, po jednej w linii:\n`11.11.2026 > 12.11.2026` przesuwa wszystkie odbiory z tego dnia,\n`zmieszane 11.11.2026 > 12.11.2026` tylko jeden rodzaj,\n`bio 11.11.2026 > brak` odwołuje odbiór,\n`+ 14.11.2026 bio` dodaje odbiór.\nRodzaje: zmieszane, selektywne, bio, gabaryty.",
+        "description": "Każdy rodzaj odpadów ma własny kalendarz (z własnym kolorem w panelu Kalendarz). Odznacz rodzaje, których nie potrzebujesz, np. BIO, jeśli kompostujesz.\n\nOdbiory, które ZGK podaje tylko jako dzień tygodnia (zwykle zmieszane i BIO), są wyliczane co tydzień. Ręczne zmiany, po jednej w linii:\n`11.11.2026 > 12.11.2026` przesuwa wszystkie odbiory z tego dnia,\n`zmieszane 11.11.2026 > 12.11.2026` tylko jeden rodzaj,\n`bio 11.11.2026 > brak` odwołuje odbiór,\n`+ 14.11.2026 bio` dodaje odbiór.\nRodzaje: zmieszane, selektywne, bio, gabaryty.",
         "data": {
+          "waste_types": "Rodzaje odbiorów",
           "weeks_ahead": "Ile tygodni naprzód wyliczać",
           "holiday_mode": "Odbiór wyliczony na dzień wolny",
           "overrides": "Ręczne zmiany terminów"
@@ -38,7 +39,8 @@
       }
     },
     "error": {
-      "bad_override": "Nie rozumiem linii {line}."
+      "bad_override": "Nie rozumiem linii {line}.",
+      "no_waste_types": "Wybierz co najmniej jeden rodzaj odbioru."
     }
   },
   "selector": {
@@ -48,12 +50,32 @@
         "next_day": "Przesuń na następny dzień roboczy",
         "skip": "Pomiń"
       }
+    },
+    "waste_type": {
+      "options": {
+        "mixed": "Odpady zmieszane",
+        "selective": "Odpady selektywne",
+        "bio": "Odpady BIO",
+        "bulk": "Gabaryty"
+      }
     }
   },
   "entity": {
     "calendar": {
       "schedule": {
-        "name": "Harmonogram"
+        "name": "Wszystkie odbiory"
+      },
+      "calendar_mixed": {
+        "name": "Odpady zmieszane"
+      },
+      "calendar_selective": {
+        "name": "Odpady selektywne"
+      },
+      "calendar_bio": {
+        "name": "Odpady BIO"
+      },
+      "calendar_bulk": {
+        "name": "Gabaryty"
       }
     },
     "sensor": {

@@ -29,8 +29,9 @@
     "step": {
       "init": {
         "title": "Schedule settings",
-        "description": "Rounds ZGK publishes only as a weekday (usually mixed and BIO) are drawn weekly. Manual changes, one per line:\n`11.11.2026 > 12.11.2026` moves every pickup on that day,\n`zmieszane 11.11.2026 > 12.11.2026` one type only,\n`bio 11.11.2026 > brak` cancels a pickup,\n`+ 14.11.2026 bio` adds one.\nTypes: zmieszane, selektywne, bio, gabaryty.",
+        "description": "Each waste type gets its own calendar (with its own colour in the Calendar panel). Untick the types you do not need, e.g. BIO if you compost.\n\nRounds ZGK publishes only as a weekday (usually mixed and BIO) are drawn weekly. Manual changes, one per line:\n`11.11.2026 > 12.11.2026` moves every pickup on that day,\n`zmieszane 11.11.2026 > 12.11.2026` one type only,\n`bio 11.11.2026 > brak` cancels a pickup,\n`+ 14.11.2026 bio` adds one.\nTypes: zmieszane, selektywne, bio, gabaryty.",
         "data": {
+          "waste_types": "Waste types",
           "weeks_ahead": "Weeks to draw ahead",
           "holiday_mode": "Drawn pickup on a public holiday",
           "overrides": "Manual date changes"
@@ -38,7 +39,8 @@
       }
     },
     "error": {
-      "bad_override": "Cannot read line {line}."
+      "bad_override": "Cannot read line {line}.",
+      "no_waste_types": "Pick at least one waste type."
     }
   },
   "selector": {
@@ -48,12 +50,32 @@
         "next_day": "Move to the next working day",
         "skip": "Skip"
       }
+    },
+    "waste_type": {
+      "options": {
+        "mixed": "Mixed waste",
+        "selective": "Selective waste",
+        "bio": "BIO waste",
+        "bulk": "Bulky waste"
+      }
     }
   },
   "entity": {
     "calendar": {
       "schedule": {
-        "name": "Schedule"
+        "name": "All pickups"
+      },
+      "calendar_mixed": {
+        "name": "Mixed waste"
+      },
+      "calendar_selective": {
+        "name": "Selective waste"
+      },
+      "calendar_bio": {
+        "name": "BIO waste"
+      },
+      "calendar_bulk": {
+        "name": "Bulky waste"
       }
     },
     "sensor": {

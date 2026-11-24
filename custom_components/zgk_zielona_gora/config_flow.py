@@ -27,12 +27,14 @@ from .const import (
     CONF_OVERRIDES,
     CONF_SEARCH,
     CONF_TITLE,
+    CONF_WASTE_TYPES,
     CONF_WEEKS_AHEAD,
     DEFAULT_HOLIDAY_MODE,
     DEFAULT_WEEKS_AHEAD,
     DOMAIN,
     HOLIDAY_MODES,
     MAX_SUGGESTIONS,
+    WASTE_TYPES,
 )
 from .coordinator import ZgkConfigEntry
 from .schedule import OverrideError, fold, parse_overrides
@@ -126,7 +128,9 @@ class ZgkOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         errors: dict[str, str] = {}
         placeholders = {"line": ""}
-        if user_input is not None:
+        if user_input is not None and not user_input.get(CONF_WASTE_TYPES):
+            errors[CONF_WASTE_TYPES] = "no_waste_types"
+        elif user_input is not None:
             try:
                 parse_overrides(user_input.get(CONF_OVERRIDES))
             except OverrideError as err:
@@ -138,6 +142,17 @@ class ZgkOptionsFlow(OptionsFlow):
         current = user_input or self.config_entry.options
         schema = vol.Schema(
             {
+                vol.Required(
+                    CONF_WASTE_TYPES,
+                    default=list(current.get(CONF_WASTE_TYPES) or WASTE_TYPES),
+                ): SelectSelector(
+                    SelectSelectorConfig(
+                        options=list(WASTE_TYPES),
+                        translation_key="waste_type",
+                        multiple=True,
+                        mode=SelectSelectorMode.LIST,
+                    )
+                ),
                 vol.Required(
                     CONF_WEEKS_AHEAD,
                     default=current.get(CONF_WEEKS_AHEAD, DEFAULT_WEEKS_AHEAD),

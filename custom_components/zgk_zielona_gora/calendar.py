@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import dt as dt_util
 
-from .const import WASTE_NAMES
+from .const import WASTE_ICONS, WASTE_NAMES
 from .coordinator import ZgkConfigEntry, ZgkCoordinator
 from .entity import ZgkEntity
 from .schedule import WEEKDAY_NAMES, Pickup
@@ -20,8 +20,13 @@ async def async_setup_entry(
     entry: ZgkConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Add the calendar."""
-    async_add_entities([ZgkCalendar(entry.runtime_data)])
+    """One calendar per chosen waste type, plus a combined one (off by default)."""
+    coordinator = entry.runtime_data
+    entities: list[ZgkCalendar] = [
+        ZgkCalendar(coordinator, t) for t in coordinator.waste_types
+    ]
+    entities.append(ZgkCalendar(coordinator))
+    async_add_entities(entities)
 
 
 def pickup_event(pickup: Pickup, news_url: str | None) -> CalendarEvent:
@@ -66,13 +71,32 @@ def pickup_event(pickup: Pickup, news_url: str | None) -> CalendarEvent:
 
 
 class ZgkCalendar(ZgkEntity, CalendarEntity):
-    """All pickups for one address."""
+    """Pickups of one waste type, or of all chosen types when waste_type is None.
 
-    _attr_translation_key = "schedule"
-    _attr_icon = "mdi:delete-empty"
+    Home Assistant shows each calendar entity in its own colour and lets the
+    user tick which ones the calendar panel and cards display.
+    """
 
-    def __init__(self, coordinator: ZgkCoordinator) -> None:
-        super().__init__(coordinator, "calendar")
+    def __init__(
+        self, coordinator: ZgkCoordinator, waste_type: str | None = None
+    ) -> None:
+        if waste_type is None:
+            super().__init__(coordinator, "calendar")
+            self._attr_translation_key = "schedule"
+            self._attr_icon = "mdi:delete-empty"
+            self._attr_entity_registry_enabled_default = False
+        else:
+            super().__init__(coordinator, f"calendar_{waste_type}")
+            self._attr_translation_key = f"calendar_{waste_type}"
+            self._attr_icon = WASTE_ICONS[waste_type]
+        self.waste_type = waste_type
+
+    def _pickups(self) -> list[Pickup]:
+        return [
+            p
+            for p in self.coordinator.data.pickups
+            if self.waste_type in (None, p.waste_type)
+        ]
 
     def _news_url(self) -> str | None:
         news = self.coordinator.data.news
@@ -81,7 +105,7 @@ class ZgkCalendar(ZgkEntity, CalendarEntity):
     @property
     def event(self) -> CalendarEvent | None:
         today = dt_util.now().date()
-        for pickup in self.coordinator.data.pickups:
+        for pickup in self._pickups():
             if pickup.day >= today:
                 return pickup_event(pickup, self._news_url())
         return None
@@ -92,8 +116,4 @@ class ZgkCalendar(ZgkEntity, CalendarEntity):
         start: date = dt_util.as_local(start_date).date()
         end: date = dt_util.as_local(end_date).date()
         url = self._news_url()
-        return [
-            pickup_event(p, url)
-            for p in self.coordinator.data.pickups
-            if start <= p.day <= end
-        ]
+        return [pickup_event(p, url) for p in self._pickups() if start <= p.day <= end]

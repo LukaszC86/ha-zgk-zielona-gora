@@ -1,6 +1,6 @@
 {
   "name": "ZGK Zielona Góra – odbiór odpadów",
   "render_readme": true,
-  "homeassistant": "2025.2.0",
+  "homeassistant": "2026.3.0",
   "country": ["PL"]
 }

@@ -16,11 +16,13 @@ from .const import (
     CONF_ADDRESS,
     CONF_HOLIDAY_MODE,
     CONF_OVERRIDES,
+    CONF_WASTE_TYPES,
     CONF_WEEKS_AHEAD,
     DEFAULT_HOLIDAY_MODE,
     DEFAULT_WEEKS_AHEAD,
     DOMAIN,
     UPDATE_INTERVAL,
+    WASTE_TYPES,
 )
 from .schedule import OverrideError, Pickup, build_pickups, parse_overrides
 
@@ -58,6 +60,12 @@ class ZgkCoordinator(DataUpdateCoordinator[ZgkData]):
     def address(self) -> str:
         return self.config_entry.data[CONF_ADDRESS]
 
+    @property
+    def waste_types(self) -> list[str]:
+        """Waste types the user wants, in the fixed order."""
+        chosen = self.config_entry.options.get(CONF_WASTE_TYPES) or WASTE_TYPES
+        return [t for t in WASTE_TYPES if t in chosen]
+
     async def _async_update_data(self) -> ZgkData:
         try:
             record = await self.client.address(self.address)
@@ -86,10 +94,12 @@ class ZgkCoordinator(DataUpdateCoordinator[ZgkData]):
         except OverrideError as err:
             _LOGGER.error("Ignoring overrides, bad line %s", err)
             overrides = []
-        return build_pickups(
+        pickups = build_pickups(
             record,
             dt_util.now().date(),
             int(options.get(CONF_WEEKS_AHEAD, DEFAULT_WEEKS_AHEAD)),
             options.get(CONF_HOLIDAY_MODE, DEFAULT_HOLIDAY_MODE),
             overrides,
         )
+        wanted = set(self.waste_types)
+        return [p for p in pickups if p.waste_type in wanted]

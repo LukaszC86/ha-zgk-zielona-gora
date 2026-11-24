@@ -13,10 +13,14 @@ Dla każdego adresu:
 
 | Encja | Opis |
 |---|---|
-| `calendar.…_harmonogram` | kalendarz ze wszystkimi odbiorami |
+| `calendar.…_odpady_zmieszane`, `…_odpady_selektywne`, `…_odpady_bio`, `…_gabaryty` | osobny kalendarz dla każdego rodzaju; w panelu Kalendarz każdy ma swój kolor i można go odznaczyć |
+| `calendar.…_wszystkie_odbiory` | wszystkie odbiory w jednym kalendarzu (domyślnie wyłączony, włączysz go w ustawieniach encji) |
 | `sensor.…_odpady_zmieszane`, `…_selektywne`, `…_bio`, `…_gabaryty` | data najbliższego odbioru; atrybuty `dni`, `wyliczony`, `swieto`, `harmonogram`, `kolejne` |
 | `sensor.…_najblizszy_odbior` | najbliższy dzień z jakimkolwiek odbiorem; atrybuty `dni`, `rodzaje` |
 | `sensor.…_komunikat_zgk` | ostatni komunikat ZGK o zmianach w harmonogramie (z linkiem) |
+
+Rodzaje, których nie potrzebujesz (np. BIO, jeśli kompostujesz), odznacz w opcjach
+integracji. Ich kalendarz i sensor znikną, a „Najbliższy odbiór” przestanie je brać pod uwagę.
 
 ## Jak czytane są dane ZGK
 

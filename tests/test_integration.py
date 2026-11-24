@@ -1,4 +1,3 @@
-
 from freezegun import freeze_time
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
@@ -54,26 +53,35 @@ async def test_flow_exact_match_and_entities(
     assert set(nxt.attributes["klucze"]) == {"mixed", "bio"}
     notice = _state(hass, "notice")
     assert notice.state.startswith("11 listopada")
-    cal = _state(hass, "calendar")
-    assert cal.attributes["message"] == "Odpady zmieszane"
-
-    events = await hass.services.async_call(
-        "calendar",
-        "get_events",
-        {
-            "entity_id": cal.entity_id,
-            "start_date_time": "2026-12-01 00:00:00",
-            "end_date_time": "2026-12-31 23:59:59",
-        },
-        blocking=True,
-        return_response=True,
+    # one calendar per waste type, the combined one is disabled by default
+    reg = er.async_get(hass)
+    combined = next(
+        e for e in reg.entities.values() if e.unique_id.endswith("_calendar")
     )
-    items = events[cal.entity_id]["events"]
-    summaries = {(e["start"], e["summary"]) for e in items}
-    assert ("2026-12-15", "Odpady selektywne") in summaries
-    assert ("2026-12-02", "Odpady BIO") in summaries
-    # 23.12 is a Wednesday, not a holiday; nothing drawn falls on 24-26.12 here
-    assert ("2026-12-23", "Odpady zmieszane") in summaries
+    assert combined.disabled_by is er.RegistryEntryDisabler.INTEGRATION
+    cal = _state(hass, "calendar_mixed")
+    assert cal.attributes["message"] == "Odpady zmieszane"
+    assert _state(hass, "calendar_bio").attributes["message"] == "Odpady BIO"
+
+    async def events(key, start, end):
+        entity_id = _state(hass, key).entity_id
+        resp = await hass.services.async_call(
+            "calendar",
+            "get_events",
+            {"entity_id": entity_id, "start_date_time": start, "end_date_time": end},
+            blocking=True,
+            return_response=True,
+        )
+        return {(e["start"], e["summary"]) for e in resp[entity_id]["events"]}
+
+    december = ("2026-12-01 00:00:00", "2026-12-31 23:59:59")
+    selective = await events("calendar_selective", *december)
+    assert ("2026-12-15", "Odpady selektywne") in selective
+    assert {s for _, s in selective} == {"Odpady selektywne"}
+    mixed = await events("calendar_mixed", *december)
+    assert ("2026-12-23", "Odpady zmieszane") in mixed
+    assert {s for _, s in mixed} == {"Odpady zmieszane"}
+    assert ("2026-12-02", "Odpady BIO") in await events("calendar_bio", *december)
 
 
 async def test_flow_pick_from_list(
@@ -120,12 +128,24 @@ async def test_options_flow(hass: HomeAssistant, aioclient_mock, records, news_h
     result = await hass.config_entries.options.async_init(entry.entry_id)
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
-        {"weeks_ahead": 10, "holiday_mode": "skip", "overrides": "zle"},
+        {"waste_types": [], "weeks_ahead": 10, "holiday_mode": "skip"},
+    )
+    assert result["errors"] == {"waste_types": "no_waste_types"}
+    no_bio = ["mixed", "selective", "bulk"]
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {
+            "waste_types": no_bio,
+            "weeks_ahead": 10,
+            "holiday_mode": "skip",
+            "overrides": "zle",
+        },
     )
     assert result["errors"] == {"overrides": "bad_override"}
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
         {
+            "waste_types": no_bio,
             "weeks_ahead": 10,
             "holiday_mode": "skip",
             "overrides": "zmieszane 25.11.2026 > 26.11.2026",
@@ -135,3 +155,14 @@ async def test_options_flow(hass: HomeAssistant, aioclient_mock, records, news_h
     await hass.async_block_till_done()
     mixed = _state(hass, "mixed")
     assert mixed.state == "2026-11-26"
+
+    # BIO turned off: its calendar and sensor are gone, next pickup ignores it
+    reg = er.async_get(hass)
+    uids = {
+        e.unique_id.removeprefix(entry.entry_id + "_") for e in reg.entities.values()
+    }
+    assert "bio" not in uids and "calendar_bio" not in uids
+    assert {"mixed", "calendar_mixed", "calendar_selective"} <= uids
+    nxt = _state(hass, "next_pickup")
+    assert nxt.state == "2026-11-26"
+    assert nxt.attributes["klucze"] == ["mixed"]

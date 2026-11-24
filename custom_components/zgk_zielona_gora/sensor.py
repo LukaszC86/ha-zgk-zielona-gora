@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_track_time_change
 from homeassistant.util import dt as dt_util
 
-from .const import WASTE_ICONS, WASTE_NAMES, WASTE_TYPES
+from .const import WASTE_ICONS, WASTE_NAMES
 from .coordinator import ZgkConfigEntry, ZgkCoordinator
 from .entity import ZgkEntity
 from .schedule import Pickup, describe_rule
@@ -25,7 +25,7 @@ async def async_setup_entry(
     """Add the sensors."""
     coordinator = entry.runtime_data
     entities: list[SensorEntity] = [
-        WasteTypeSensor(coordinator, t) for t in WASTE_TYPES
+        WasteTypeSensor(coordinator, t) for t in coordinator.waste_types
     ]
     entities += [NextPickupSensor(coordinator), NoticeSensor(coordinator)]
     async_add_entities(entities)
