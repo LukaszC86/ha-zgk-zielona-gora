@@ -2,6 +2,7 @@ from freezegun import freeze_time
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -185,5 +186,40 @@ async def test_calendar_names_without_address(
     assert bio.entity_id == "calendar.odpady_bio"
     assert bio.attributes["friendly_name"] == "Odpady BIO"
     assert _state(hass, "calendar_bulk").attributes["friendly_name"] == "Gabaryty"
+    # calendars have no device, so the UI cannot prefix the address
+    reg = er.async_get(hass)
+    cal_entry = reg.async_get(bio.entity_id)
+    assert cal_entry.device_id is None
+    assert cal_entry.config_entry_id == entry.entry_id
+    assert reg.async_get(_state(hass, "bio").entity_id).device_id is not None
     # sensors keep the address prefix
     assert "akademicka_1" in _state(hass, "bio").entity_id
+
+
+async def test_old_calendar_detached_from_device(
+    hass: HomeAssistant, aioclient_mock, records, news_html
+):
+    _mock(aioclient_mock, records, news_html, lambda r: r["value"] == "AKADEMICKA 1")
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={"address": "AKADEMICKA 1", "title": "AKADEMICKA 1"},
+        unique_id="akademicka 1",
+    )
+    entry.add_to_hass(hass)
+    device = dr.async_get(hass).async_get_or_create(
+        config_entry_id=entry.entry_id, identifiers={(DOMAIN, entry.entry_id)}
+    )
+    reg = er.async_get(hass)
+    old = reg.async_get_or_create(
+        "calendar",
+        DOMAIN,
+        f"{entry.entry_id}_calendar_bio",
+        config_entry=entry,
+        device_id=device.id,
+        suggested_object_id="zgk_racula_odpady_bio",
+    )
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    updated = reg.async_get(old.entity_id)
+    assert updated.entity_id == old.entity_id
+    assert updated.device_id is None

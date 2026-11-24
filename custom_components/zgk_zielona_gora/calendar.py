@@ -81,6 +81,10 @@ class ZgkCalendar(ZgkEntity, CalendarEntity):
     """
 
     _attr_has_entity_name = False
+    # Since 2026.11 the frontend puts the device name in front of an entity's
+    # name wherever context is needed, so the calendars are not attached to the
+    # address device; they still belong to the config entry.
+    _attr_device_info = None
 
     def __init__(
         self, coordinator: ZgkCoordinator, waste_type: str | None = None
@@ -94,6 +98,7 @@ class ZgkCalendar(ZgkEntity, CalendarEntity):
             super().__init__(coordinator, f"calendar_{waste_type}")
             self._attr_name = WASTE_NAMES[waste_type]
             self._attr_icon = WASTE_ICONS[waste_type]
+        self._attr_device_info = None
         self.waste_type = waste_type
 
     def _pickups(self) -> list[Pickup]:

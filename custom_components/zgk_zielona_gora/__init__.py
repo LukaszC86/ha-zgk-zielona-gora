@@ -43,3 +43,6 @@ def _remove_unwanted_entities(
     for entity in er.async_entries_for_config_entry(registry, entry.entry_id):
         if entity.unique_id in keys:
             registry.async_remove(entity.entity_id)
+        elif entity.domain == "calendar" and entity.device_id is not None:
+            # Up to 0.2.1 calendars were attached to the address device.
+            registry.async_update_entity(entity.entity_id, device_id=None)
