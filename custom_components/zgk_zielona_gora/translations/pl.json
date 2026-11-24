@@ -1,0 +1,80 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Adres w Zielonej Górze",
+        "description": "Wpisz ulicę i numer budynku tak, jak w wyszukiwarce ZGK (np. AKADEMICKA 1). Możesz też wpisać samą ulicę i wybrać budynek z listy.",
+        "data": {
+          "search": "Ulica i numer"
+        }
+      },
+      "pick": {
+        "title": "Wybierz adres",
+        "description": "ZGK znalazło {count} adresów.",
+        "data": {
+          "address": "Adres"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie udało się połączyć z www.zgk.net.pl.",
+      "not_found": "ZGK nie zna takiego adresu. Sprawdź pisownię (z polskimi znakami).",
+      "too_many": "Za dużo wyników. Dopisz numer budynku lub dokładniejszą nazwę."
+    },
+    "abort": {
+      "already_configured": "Ten adres jest już dodany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ustawienia harmonogramu",
+        "description": "Odbiory, które ZGK podaje tylko jako dzień tygodnia (zwykle zmieszane i BIO), są wyliczane co tydzień. Ręczne zmiany, po jednej w linii:\n`11.11.2026 > 12.11.2026` przesuwa wszystkie odbiory z tego dnia,\n`zmieszane 11.11.2026 > 12.11.2026` tylko jeden rodzaj,\n`bio 11.11.2026 > brak` odwołuje odbiór,\n`+ 14.11.2026 bio` dodaje odbiór.\nRodzaje: zmieszane, selektywne, bio, gabaryty.",
+        "data": {
+          "weeks_ahead": "Ile tygodni naprzód wyliczać",
+          "holiday_mode": "Odbiór wyliczony na dzień wolny",
+          "overrides": "Ręczne zmiany terminów"
+        }
+      }
+    },
+    "error": {
+      "bad_override": "Nie rozumiem linii {line}."
+    }
+  },
+  "selector": {
+    "holiday_mode": {
+      "options": {
+        "mark": "Zostaw i oznacz ⚠ (sprawdź komunikat ZGK)",
+        "next_day": "Przesuń na następny dzień roboczy",
+        "skip": "Pomiń"
+      }
+    }
+  },
+  "entity": {
+    "calendar": {
+      "schedule": {
+        "name": "Harmonogram"
+      }
+    },
+    "sensor": {
+      "mixed": {
+        "name": "Odpady zmieszane"
+      },
+      "selective": {
+        "name": "Odpady selektywne"
+      },
+      "bio": {
+        "name": "Odpady BIO"
+      },
+      "bulk": {
+        "name": "Gabaryty"
+      },
+      "next_pickup": {
+        "name": "Najbliższy odbiór"
+      },
+      "notice": {
+        "name": "Komunikat ZGK"
+      }
+    }
+  }
+}

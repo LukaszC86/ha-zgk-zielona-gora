@@ -1,0 +1,80 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Address in Zielona Góra",
+        "description": "Enter the street and building number as the ZGK search shows it (e.g. AKADEMICKA 1). You can also enter just the street and pick the building from a list.",
+        "data": {
+          "search": "Street and number"
+        }
+      },
+      "pick": {
+        "title": "Pick the address",
+        "description": "ZGK found {count} addresses.",
+        "data": {
+          "address": "Address"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not connect to www.zgk.net.pl.",
+      "not_found": "ZGK does not know this address. Check the spelling (with Polish characters).",
+      "too_many": "Too many results. Add the building number or a more precise name."
+    },
+    "abort": {
+      "already_configured": "This address is already added."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Schedule settings",
+        "description": "Rounds ZGK publishes only as a weekday (usually mixed and BIO) are drawn weekly. Manual changes, one per line:\n`11.11.2026 > 12.11.2026` moves every pickup on that day,\n`zmieszane 11.11.2026 > 12.11.2026` one type only,\n`bio 11.11.2026 > brak` cancels a pickup,\n`+ 14.11.2026 bio` adds one.\nTypes: zmieszane, selektywne, bio, gabaryty.",
+        "data": {
+          "weeks_ahead": "Weeks to draw ahead",
+          "holiday_mode": "Drawn pickup on a public holiday",
+          "overrides": "Manual date changes"
+        }
+      }
+    },
+    "error": {
+      "bad_override": "Cannot read line {line}."
+    }
+  },
+  "selector": {
+    "holiday_mode": {
+      "options": {
+        "mark": "Keep and mark ⚠ (check the ZGK notice)",
+        "next_day": "Move to the next working day",
+        "skip": "Skip"
+      }
+    }
+  },
+  "entity": {
+    "calendar": {
+      "schedule": {
+        "name": "Schedule"
+      }
+    },
+    "sensor": {
+      "mixed": {
+        "name": "Mixed waste"
+      },
+      "selective": {
+        "name": "Selective waste"
+      },
+      "bio": {
+        "name": "BIO waste"
+      },
+      "bulk": {
+        "name": "Bulky waste"
+      },
+      "next_pickup": {
+        "name": "Next pickup"
+      },
+      "notice": {
+        "name": "ZGK notice"
+      }
+    }
+  }
+}

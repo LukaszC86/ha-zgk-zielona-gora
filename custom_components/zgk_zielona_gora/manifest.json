@@ -1,0 +1,12 @@
+{
+  "domain": "zgk_zielona_gora",
+  "name": "ZGK Zielona Góra – odbiór odpadów",
+  "codeowners": ["@LukaszC86"],
+  "config_flow": true,
+  "documentation": "https://github.com/LukaszC86/ha-zgk-zielona-gora",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/LukaszC86/ha-zgk-zielona-gora/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
