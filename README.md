@@ -13,8 +13,8 @@ Dla każdego adresu:
 
 | Encja | Opis |
 |---|---|
-| `calendar.…_odpady_zmieszane`, `…_odpady_selektywne`, `…_odpady_bio`, `…_gabaryty` | osobny kalendarz dla każdego rodzaju; w panelu Kalendarz każdy ma swój kolor i można go odznaczyć |
-| `calendar.…_wszystkie_odbiory` | wszystkie odbiory w jednym kalendarzu (domyślnie wyłączony, włączysz go w ustawieniach encji) |
+| `calendar.odpady_zmieszane`, `calendar.odpady_selektywne`, `calendar.odpady_bio`, `calendar.gabaryty` | osobny kalendarz dla każdego rodzaju, nazwany samym rodzajem odpadów; w panelu Kalendarz każdy ma swój kolor i można go odznaczyć |
+| `calendar.wszystkie_odbiory` | wszystkie odbiory w jednym kalendarzu (domyślnie wyłączony, włączysz go w ustawieniach encji) |
 | `sensor.…_odpady_zmieszane`, `…_selektywne`, `…_bio`, `…_gabaryty` | data najbliższego odbioru; atrybuty `dni`, `wyliczony`, `swieto`, `harmonogram`, `kolejne` |
 | `sensor.…_najblizszy_odbior` | najbliższy dzień z jakimkolwiek odbiorem; atrybuty `dni`, `rodzaje` |
 | `sensor.…_komunikat_zgk` | ostatni komunikat ZGK o zmianach w harmonogramie (z linkiem) |

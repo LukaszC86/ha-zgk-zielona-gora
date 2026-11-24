@@ -166,3 +166,24 @@ async def test_options_flow(hass: HomeAssistant, aioclient_mock, records, news_h
     nxt = _state(hass, "next_pickup")
     assert nxt.state == "2026-11-26"
     assert nxt.attributes["klucze"] == ["mixed"]
+
+
+@freeze_time("2026-11-24 09:00:00+01:00")
+async def test_calendar_names_without_address(
+    hass: HomeAssistant, aioclient_mock, records, news_html
+):
+    _mock(aioclient_mock, records, news_html, lambda r: r["value"] == "AKADEMICKA 1")
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={"address": "AKADEMICKA 1", "title": "AKADEMICKA 1"},
+        unique_id="akademicka 1",
+    )
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    bio = _state(hass, "calendar_bio")
+    assert bio.entity_id == "calendar.odpady_bio"
+    assert bio.attributes["friendly_name"] == "Odpady BIO"
+    assert _state(hass, "calendar_bulk").attributes["friendly_name"] == "Gabaryty"
+    # sensors keep the address prefix
+    assert "akademicka_1" in _state(hass, "bio").entity_id

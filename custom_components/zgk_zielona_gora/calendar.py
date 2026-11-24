@@ -75,19 +75,24 @@ class ZgkCalendar(ZgkEntity, CalendarEntity):
 
     Home Assistant shows each calendar entity in its own colour and lets the
     user tick which ones the calendar panel and cards display.
+
+    The calendar panel lists calendars by friendly name, so the name is just the
+    waste type ("Odpady BIO"), without the device (address) prefix.
     """
+
+    _attr_has_entity_name = False
 
     def __init__(
         self, coordinator: ZgkCoordinator, waste_type: str | None = None
     ) -> None:
         if waste_type is None:
             super().__init__(coordinator, "calendar")
-            self._attr_translation_key = "schedule"
+            self._attr_name = "Wszystkie odbiory"
             self._attr_icon = "mdi:delete-empty"
             self._attr_entity_registry_enabled_default = False
         else:
             super().__init__(coordinator, f"calendar_{waste_type}")
-            self._attr_translation_key = f"calendar_{waste_type}"
+            self._attr_name = WASTE_NAMES[waste_type]
             self._attr_icon = WASTE_ICONS[waste_type]
         self.waste_type = waste_type
 
